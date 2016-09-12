@@ -1,4 +1,4 @@
-package com.leoromanovsky.bioinformatics
+package bio
 
 import scala.io.Source
 
@@ -7,6 +7,6 @@ object VibrioCholerae {
   lazy val code = Source.fromFile(filename).getLines.mkString
 
   def main(args: Array[String]): Unit = {
-    println(s"VibrioCholerae length: ${code.size}")
+    println(s"VibrioCholerae length: ${code.length}")
   }
 }
