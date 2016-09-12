@@ -26,4 +26,12 @@ class KMerSpec extends BioUnitSpec {
       assert(KMer.reverseCompliment("AAAACCCGGT") == "ACCGGGTTTT")
     }
   }
+
+  describe("matchPattern") {
+    it("is correct") {
+      println("pattern!")
+      val out = KMer.matchPattern("GATATATGCATATACTT", "ATAT").mkString(" ")
+      println(out)
+    }
+  }
 }

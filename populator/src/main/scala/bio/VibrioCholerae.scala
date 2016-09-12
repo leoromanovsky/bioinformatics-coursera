@@ -22,8 +22,15 @@ object VibrioCholerae {
     val f = 14
     KMer.mostFrequent(g, f).foreach(println)
     */
+
+    /*
     val input = Source.fromFile("data/test.txt").getLines.mkString
     println(KMer.reverseCompliment(input))
+    */
+
+    val input = Source.fromFile("data/vibrio_cholerae.txt").getLines.mkString
+    val output = KMer.matchPattern(input, "CTTGATCAT").mkString(" ")
+    println(output)
   }
 }
 

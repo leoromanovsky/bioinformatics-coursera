@@ -51,4 +51,16 @@ object KMer {
       case 'C' => 'G'
     }.mkString.reverse
   }
+
+  /*
+  All starting positions in Genome where Pattern appears as a substring.
+   */
+  def matchPattern(genome: String, pattern: String): Seq[Int] = {
+    genome
+      .sliding(pattern.length)
+      .zipWithIndex
+      .filter(_._1 == pattern)
+      .map(_._2)
+      .toSeq
+  }
 }
