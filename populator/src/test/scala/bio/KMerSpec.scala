@@ -14,4 +14,10 @@ class KMerSpec extends BioUnitSpec {
       assert(KMer.count("CGATATATCCATAG", "ATA") == 3)
     }
   }
+
+  describe("wordFrequences") {
+    it("is correct") {
+      assert(KMer.mostFrequent("ACTGACTCCCACCCC", 3) == Seq("CCC"))
+    }
+  }
 }

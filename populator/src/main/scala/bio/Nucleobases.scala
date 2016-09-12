@@ -30,4 +30,12 @@ object KMer {
       case _ => code.sliding(patternLength).count(_ == pattern)
     }
   }
+
+  def mostFrequent(code: String, length: Int): Seq[String] = {
+    val frequencies = code.sliding(length).map { word =>
+      (word, count(code, word))
+    }.toSeq
+    val largestFreq: Int = frequencies.maxBy(_._2)._2
+    frequencies.filter(_._2 == largestFreq).map(_._1).distinct
+  }
 }
