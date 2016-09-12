@@ -20,4 +20,10 @@ class KMerSpec extends BioUnitSpec {
       assert(KMer.mostFrequent("ACTGACTCCCACCCC", 3) == Seq("CCC"))
     }
   }
+
+  describe("reverseCompliment") {
+    it("is correct") {
+      assert(KMer.reverseCompliment("AAAACCCGGT") == "ACCGGGTTTT")
+    }
+  }
 }

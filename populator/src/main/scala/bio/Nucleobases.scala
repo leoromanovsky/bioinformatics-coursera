@@ -16,6 +16,7 @@ object Nucleobases {
 }
 
 object KMer {
+
   /**
     *
     * @param code
@@ -32,10 +33,22 @@ object KMer {
   }
 
   def mostFrequent(code: String, length: Int): Seq[String] = {
-    val frequencies = code.sliding(length).map { word =>
-      (word, count(code, word))
-    }.toSeq
+    val frequencies = code
+      .sliding(length)
+      .map { word =>
+        (word, count(code, word))
+      }
+      .toSeq
     val largestFreq: Int = frequencies.maxBy(_._2)._2
     frequencies.filter(_._2 == largestFreq).map(_._1).distinct
+  }
+
+  def reverseCompliment(code: String): String = {
+    code.map {
+      case 'A' => 'T'
+      case 'T' => 'A'
+      case 'G' => 'C'
+      case 'C' => 'G'
+    }.mkString.reverse
   }
 }
