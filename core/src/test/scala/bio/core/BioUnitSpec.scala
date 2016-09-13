@@ -1,4 +1,4 @@
-package bio
+package bio.core
 
 import org.scalatest._
 

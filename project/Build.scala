@@ -17,7 +17,6 @@ object Build extends Build {
       libraryDependencies ++= Seq(
         "org.scalactic" %% "scalactic" % "3.0.0",
         "org.scalatest" %% "scalatest" % "3.0.0" % "test"
-        //"com.typesafe.play" %% "play-json" % "2.3.4"
       )
     )
 
@@ -37,8 +36,8 @@ object Build extends Build {
         fork := true,
         runMain in Compile <<= Defaults.runMainTask(fullClasspath in Compile, runner in (Compile, run)),
         libraryDependencies ++= Seq(
-          "spark.jobserver" %% "job-server-api" % "0.6.2",
           spark("core"),
+          "spark.jobserver" %% "job-server-api" % "0.6.2",
           "com.databricks" %% "spark-csv" % "1.4.0",
           "com.github.tototoshi" %% "scala-csv" % "1.3.3"
         ),

@@ -1,13 +1,15 @@
-package bio
+package bio.populator
+
+import bio.populator.Nucleobases.Nucleobase
 
 import scala.io.Source
 
-object VibrioCholerae {
+object HiddenMessages {
   val filename = "data/vibrio_cholerae.txt"
-  lazy val code = new LoadGenome(filename).genome
+  lazy val genome = new LoadGenome(filename).genome
 
   def main(args: Array[String]): Unit = {
-    println(s"VibrioCholerae length: ${code.length}")
+    //println(s"VibrioCholerae length: ${genome.length}")
 
     /*
     val input = Source.fromFile("data/test.txt").getLines.mkString.split(" ")
@@ -23,17 +25,20 @@ object VibrioCholerae {
     KMer.mostFrequent(g, f).foreach(println)
     */
 
-    /*
-    val input = Source.fromFile("data/test.txt").getLines.mkString
-    println(KMer.reverseCompliment(input))
-    */
 
+    val input = Source.fromFile("data/test.txt").getLines.mkString
+    val analyzer = new KMerAnalyzer(input)
+    //println(analyzer.clump(11, 489, 17).mkString(" "))
+
+    /*
     val input = Source.fromFile("data/vibrio_cholerae.txt").getLines.mkString
     val output = KMer.matchPattern(input, "CTTGATCAT").mkString(" ")
     println(output)
+    */
   }
 }
 
 class LoadGenome(filename: String) {
-  lazy val genome = Source.fromFile(filename).getLines.mkString
+  private val rawGenome = Source.fromFile(filename).getLines.mkString
+  val genome: Seq[Nucleobase] = Nucleobases.parseSequence(rawGenome)
 }
