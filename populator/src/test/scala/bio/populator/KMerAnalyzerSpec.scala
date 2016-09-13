@@ -5,49 +5,51 @@ import bio.core.BioUnitSpec
 class KMerAnalyzerSpec extends BioUnitSpec {
   describe("patternCount") {
     it("should have size 0") {
-      val subject = new KMerAnalyzer("")
-      assert(subject.patternCount("") == 0)
+      val subject = new KMerAnalyzer(NucleobaseSequence(""))
+      assert(subject.patternCount(NucleobaseSequence("")) == 0)
     }
 
     it("is simple count") {
-      val subject = new KMerAnalyzer("ACAACTATGCATACTATCGGGAACTATCCT")
-      assert(subject.patternCount("ACTAT") == 3)
+      val subject =
+        new KMerAnalyzer(NucleobaseSequence("ACAACTATGCATACTATCGGGAACTATCCT"))
+      assert(subject.patternCount(NucleobaseSequence("ACTAT")) == 3)
     }
 
     it("is a sliding count") {
-      val subject = new KMerAnalyzer("CGATATATCCATAG")
-      assert(subject.patternCount("ATA") == 3)
+      val subject = new KMerAnalyzer(NucleobaseSequence("CGATATATCCATAG"))
+      assert(subject.patternCount(NucleobaseSequence("ATA")) == 3)
     }
   }
 
   describe("mostFrequent") {
     it("is correct") {
-      val subject = new KMerAnalyzer("ACTGACTCCCACCCC")
-      assert(subject.mostFrequent(3) == "CCC")
+      val subject = new KMerAnalyzer(NucleobaseSequence("ACTGACTCCCACCCC"))
+      assert(subject.mostFrequent(3).head == NucleobaseSequence("CCC"))
     }
   }
 
   describe("reverseCompliment") {
     it("is correct") {
-      val subject = new KMerAnalyzer("AAAACCCGGT")
-      assert(subject.reverseCompliment == "ACCGGGTTTT")
+      val seq = NucleobaseSequence("AAAACCCGGT")
+      assert(seq.reverseCompliment == NucleobaseSequence("ACCGGGTTTT"))
     }
   }
 
   describe("matchPattern") {
     it("is correct") {
-      val subject = new KMerAnalyzer("AAAACCCGGT")
-      val out = subject.matchPattern("ATAT").mkString(",")
+      val subject = new KMerAnalyzer(NucleobaseSequence("AAAACCCGGT"))
+      val out = subject.matchPattern(NucleobaseSequence("ATAT")).mkString(",")
       assert(out == "1,3,9")
     }
   }
 
   describe("clumb") {
     it("finds it") {
-      val subject = new KMerAnalyzer(
-        "CGGACTCGACAGATGTGAAGAACGACAATGTGAAGACTCGACACGACAGAGTGAAGAGAAGAGGAAACATTGTAA")
+      val subject = new KMerAnalyzer(NucleobaseSequence(
+        "CGGACTCGACAGATGTGAAGAACGACAATGTGAAGACTCGACACGACAGAGTGAAGAGAAGAGGAAACATTGTAA"))
       val out = subject.clump(5, 50, 4)
-      assert(out == Seq("CGACA", "GAAGA"))
+      assert(
+        out == Seq(NucleobaseSequence("CGACA"), NucleobaseSequence("GAAGA")))
     }
   }
 }

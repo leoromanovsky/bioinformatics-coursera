@@ -26,7 +26,7 @@ object HiddenMessages {
     */
 
 
-    val input = Source.fromFile("data/test.txt").getLines.mkString
+    val input = NucleobaseSequence(Source.fromFile("data/test.txt").getLines.mkString)
     val analyzer = new KMerAnalyzer(input)
     //println(analyzer.clump(11, 489, 17).mkString(" "))
 
@@ -40,5 +40,5 @@ object HiddenMessages {
 
 class LoadGenome(filename: String) {
   private val rawGenome = Source.fromFile(filename).getLines.mkString
-  val genome: Seq[Nucleobase] = Nucleobases.parseSequence(rawGenome)
+  val genome: Seq[Nucleobase] = NucleobaseSequence(rawGenome)
 }

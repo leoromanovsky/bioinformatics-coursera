@@ -1,5 +1,7 @@
 package bio.populator
 
+import bio.populator.Nucleobases.Nucleobase
+
 object Nucleobases {
   sealed abstract class Nucleobase(symbol: String) {
     def reverse: Nucleobase
@@ -29,49 +31,65 @@ object Nucleobases {
     'C' -> Cytosine,
     'G' -> Guanine
   )
+}
 
-  def parseSequence(s: String): Seq[Nucleobase] = {
-    s.map(parseString(_))
+case class NucleobaseSequence(underlying: Seq[Nucleobase])
+    extends scala.collection.Seq[Nucleobase] {
+  def reverseCompliment: NucleobaseSequence = {
+    NucleobaseSequence(underlying.map(_.reverse).reverse)
+  }
+
+  override def length: Int = underlying.length
+
+  override def iterator: Iterator[Nucleobase] = underlying.iterator
+
+  override def apply(idx: Int): Nucleobase = underlying.apply(idx)
+}
+
+object NucleobaseSequence {
+  def apply(s: String): NucleobaseSequence = {
+    NucleobaseSequence(s.map(Nucleobases.parseString(_)))
   }
 }
 
-class KMerAnalyzer(genome: String) {
+case class Genome(nucleobases: NucleobaseSequence) {}
+
+object Genome {}
+
+class KMerAnalyzer(nucleobaseSequence: NucleobaseSequence) {
 
   // How many times does `pattern` appear in `genome`
-  def patternCount(pattern: String): Int = {
+  def patternCount(pattern: Seq[Nucleobase]): Int = {
     val patternLength = pattern.length
-    val genomeLength = genome.length
-    patternLength < genomeLength match {
-      case true => 0
-      case false => genome.sliding(patternLength).count(_ == pattern)
+    //val genomeLength = nucleobaseSequence.length
+    patternLength match {
+      case 0 => 0
+      case 1 => 0
+      case _ =>
+        nucleobaseSequence.sliding(patternLength).count(_ == pattern)
     }
   }
 
-  def mostFrequent(length: Int): String = {
-    val frequencies = genome
+  def mostFrequent(length: Int): Seq[NucleobaseSequence] = {
+    val frequencies = nucleobaseSequence
       .sliding(length)
       .map { word =>
         (word, patternCount(word))
       }
       .toSeq
     val largestFreq: Int = frequencies.maxBy(_._2)._2
-    frequencies.filter(_._2 == largestFreq).map(_._1).distinct.head
-  }
-
-  def reverseCompliment: String = {
-    genome.map {
-      case 'A' => 'T'
-      case 'T' => 'A'
-      case 'G' => 'C'
-      case 'C' => 'G'
-    }.mkString.reverse
+    frequencies
+      .filter(_._2 == largestFreq)
+      .map(_._1)
+      .distinct
+      .map(a => NucleobaseSequence(a))
   }
 
   /*
   All starting positions in Genome where Pattern appears as a substring.
    */
-  def matchPattern(pattern: String): Seq[Int] = {
-    genome
+  def matchPattern(pattern: NucleobaseSequence): Seq[Int] = {
+    nucleobaseSequence
       .sliding(pattern.length)
       .zipWithIndex
       .filter(_._1 == pattern)
@@ -79,13 +97,13 @@ class KMerAnalyzer(genome: String) {
       .toSeq
   }
 
-  def clump(k: Int, l: Int, t: Int): Seq[String] = {
-    genome
+  def clump(k: Int, l: Int, t: Int): Seq[NucleobaseSequence] = {
+    nucleobaseSequence
       .sliding(l)
       .map { window =>
-        val miniAnalyze = new KMerAnalyzer(window)
+        val miniAnalyze = new KMerAnalyzer(NucleobaseSequence(window))
 
-        val m = miniAnalyze.mostFrequent(k)
+        val m = miniAnalyze.mostFrequent(k).head
         val c = miniAnalyze.patternCount(m)
         (m, c)
       }
