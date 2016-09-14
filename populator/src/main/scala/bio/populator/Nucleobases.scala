@@ -4,13 +4,14 @@ import bio.populator.Nucleobases.Nucleobase
 
 object Nucleobases {
   sealed abstract class Nucleobase(symbol: String) {
+
     def reverse: Nucleobase
 
     override def toString: String = symbol
   }
 
   case object Adenine extends Nucleobase("A") {
-    def reverse = Thymine
+    override def reverse = Thymine
   }
 
   case object Thymine extends Nucleobase("T") {
@@ -33,35 +34,49 @@ object Nucleobases {
   )
 }
 
-case class NucleobaseSequence(underlying: Seq[Nucleobase])
-    extends scala.collection.Seq[Nucleobase] {
-  def reverseCompliment: NucleobaseSequence = {
-    NucleobaseSequence(underlying.map(_.reverse).reverse)
-  }
-
-  override def length: Int = underlying.length
-
-  override def iterator: Iterator[Nucleobase] = underlying.iterator
-
-  override def apply(idx: Int): Nucleobase = underlying.apply(idx)
-}
-
 object NucleobaseSequence {
-  def apply(s: String): NucleobaseSequence = {
-    NucleobaseSequence(s.map(Nucleobases.parseString(_)))
+  def reverseCompliment(seq: Seq[Nucleobase]): Seq[Nucleobase] = {
+    seq.map(_.reverse).reverse
   }
+
+  def apply(s: String): Seq[Nucleobase] = {
+    s.map(Nucleobases.parseString(_))
+  }
+
+  def patternToNumber(pattern: Seq[Nucleobase]): Long = {
+    if (pattern.isEmpty) {
+      return 0
+    }
+
+    4 * patternToNumber(pattern.init) + encoding(pattern.last)
+  }
+
+  private val encoding: Map[Nucleobase, Int] = Map(
+    Nucleobases.Adenine -> 0,
+    Nucleobases.Cytosine -> 1,
+    Nucleobases.Guanine -> 2,
+    Nucleobases.Thymine -> 3
+  )
+
+  private val decoding: Map[Int, Nucleobase] = Map(
+    0 -> Nucleobases.Adenine,
+    1 -> Nucleobases.Cytosine,
+    2 -> Nucleobases.Guanine,
+    3 -> Nucleobases.Thymine
+  )
 }
 
-case class Genome(nucleobases: NucleobaseSequence) {}
+case class Genome(nucleobases: Seq[Nucleobase]) {}
 
 object Genome {}
 
-class KMerAnalyzer(nucleobaseSequence: NucleobaseSequence) {
+class KMerAnalyzer(nucleobaseSequence: Seq[Nucleobase]) {
 
-  // How many times does `pattern` appear in `genome`
+  /**
+    * How many times does `pattern` appear in `nucleobaseSequence`
+    */
   def patternCount(pattern: Seq[Nucleobase]): Int = {
     val patternLength = pattern.length
-    //val genomeLength = nucleobaseSequence.length
     patternLength match {
       case 0 => 0
       case 1 => 0
@@ -70,46 +85,61 @@ class KMerAnalyzer(nucleobaseSequence: NucleobaseSequence) {
     }
   }
 
-  def mostFrequent(length: Int): Seq[NucleobaseSequence] = {
-    val frequencies = nucleobaseSequence
+  def frequencies(length: Int): Map[Long, Int] = {
+    nucleobaseSequence
       .sliding(length)
-      .map { word =>
-        (word, patternCount(word))
+      .foldLeft(Map[Long, Int]().withDefaultValue(0)) { (h, a) =>
+        val s = NucleobaseSequence.patternToNumber(a)
+        h.updated(s, h(s) + 1)
       }
-      .toSeq
-    val largestFreq: Int = frequencies.maxBy(_._2)._2
-    frequencies
-      .filter(_._2 == largestFreq)
-      .map(_._1)
-      .distinct
-      .map(a => NucleobaseSequence(a))
   }
 
-  /*
-  All starting positions in Genome where Pattern appears as a substring.
-   */
-  def matchPattern(pattern: NucleobaseSequence): Seq[Int] = {
+  /**
+    * Returns the most frequently occurring sequences.
+    */
+  def mostFrequent(length: Int): Seq[Seq[Nucleobase]] = {
+    val frequencyMap = frequencies(length)
+
+    val largestFreq: Int = frequencyMap.maxBy(_._2)._2
+    frequencyMap.find {
+      case (k, count) =>
+        count == largestFreq
+    }.map(_._1).toSeq.distinct.map { a =>
+      //NucleobaseSequence.decodeHash(a, length)
+      Seq()
+    }
+  }
+
+  /**
+    * All starting positions in Genome where Pattern appears as a substring.
+    */
+  def matchPattern(pattern: Seq[Nucleobase]): Seq[Int] = {
     nucleobaseSequence
       .sliding(pattern.length)
       .zipWithIndex
-      .filter(_._1 == pattern.underlying)
+      .filter(_._1 == pattern)
       .map(_._2)
       .toSeq
   }
 
-  def clump(k: Int, l: Int, t: Int): Seq[NucleobaseSequence] = {
+  /**
+    * k - k-mer size
+    * L - window size
+    * t - frequency of interest
+    */
+  def clump(k: Int, l: Int, t: Int): Seq[String] = {
     nucleobaseSequence
       .sliding(l)
-      .map { window =>
-        val miniAnalyze = new KMerAnalyzer(NucleobaseSequence(window))
-
-        val m = miniAnalyze.mostFrequent(k).head
-        val c = miniAnalyze.patternCount(m)
-        (m, c)
+      .flatMap { window =>
+        val miniAnalyze = new KMerAnalyzer(window)
+        miniAnalyze.frequencies(k).filter(_._2 >= t).map { w =>
+          //NucleobaseSequence.decodeHash(w._1, k)
+          Seq()
+        }
       }
-      .filter(_._2 >= t)
-      .map(_._1)
       .toSeq
       .distinct
+      .map(_.mkString)
+      .sorted
   }
 }

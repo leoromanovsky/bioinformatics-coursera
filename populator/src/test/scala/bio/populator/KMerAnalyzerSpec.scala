@@ -24,14 +24,16 @@ class KMerAnalyzerSpec extends BioUnitSpec {
   describe("mostFrequent") {
     it("is correct") {
       val subject = new KMerAnalyzer(NucleobaseSequence("ACTGACTCCCACCCC"))
-      assert(subject.mostFrequent(3).head == NucleobaseSequence("CCC"))
+      val out = subject.mostFrequent(3).headOption
+      assert(out.nonEmpty)
+      assert(out.get == NucleobaseSequence("CCC"))
     }
   }
 
   describe("reverseCompliment") {
     it("is correct") {
-      val seq = NucleobaseSequence("AAAACCCGGT")
-      assert(seq.reverseCompliment == NucleobaseSequence("ACCGGGTTTT"))
+      assert(NucleobaseSequence.reverseCompliment(
+        NucleobaseSequence("AAAACCCGGT")) == NucleobaseSequence("ACCGGGTTTT"))
     }
   }
 
