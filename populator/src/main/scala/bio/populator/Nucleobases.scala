@@ -139,21 +139,6 @@ class KMerAnalyzer(nucleobaseSequence: Seq[Nucleobase]) {
     * t - frequency of interest
     */
   def clump(k: Int, l: Int, t: Int): Seq[String] = {
-    nucleobaseSequence
-      .sliding(l)
-      .flatMap { window =>
-        val miniAnalyze = new KMerAnalyzer(window)
-        miniAnalyze.frequencies(k).filter(_._2 >= t).map { w =>
-          NucleobaseSequence(NucleobaseSequence.numberToPattern(w._1, k))
-        }
-      }
-      .toSeq
-      .distinct
-      .map(_.mkString)
-      .sorted
-  }
-
-  def betterClump(k: Int, l: Int, t: Int): Seq[String] = {
     val firstSlice = nucleobaseSequence.slice(0, l)
     val freqMap = new KMerAnalyzer(firstSlice).frequencies(k)
     val runningFreqMap = collection.mutable.Map[Long, Int]().withDefaultValue(0) ++= freqMap
@@ -178,38 +163,9 @@ class KMerAnalyzer(nucleobaseSequence: Seq[Nucleobase]) {
         clumps(lastIndex) = 1
       }
     }
-    
+
     clumps.filter(_._2 == 1).map { case(key, _) =>
       NucleobaseSequence.numberToPattern(key, k)
     }.toSeq
-
-    /*
-    FrequentPatterns ← an empty set
-    for i ← 0 to 4k − 1
-        Clump(i) ← 0
-    Text ← Genome(0, L)
-    FrequencyArray ← ComputingFrequencies(Text, k)
-
-
-    for i ← 0 to 4k − 1
-        if FrequencyArray(i) ≥ t
-            Clump(i) ← 1
-
-    for i ← 1 to |Genome| − L
-        FirstPattern ← Genome(i − 1, k)
-        index ← PatternToNumber(FirstPattern)
-        FrequencyArray(index) ← FrequencyArray(index) − 1
-
-        LastPattern ← Genome(i + L − k, k)
-        index ← PatternToNumber(LastPattern)
-        FrequencyArray(index) ← FrequencyArray(index) + 1
-        if FrequencyArray(index) ≥ t
-            Clump(index) ← 1
-    for i ← 0 to 4k − 1
-        if Clump(i) = 1
-            Pattern ← NumberToPattern(i, k)
-            add Pattern to the set FrequentPatterns
-    return FrequentPatterns
-     */
   }
 }
