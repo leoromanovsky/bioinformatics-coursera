@@ -117,8 +117,7 @@ class KMerAnalyzer(nucleobaseSequence: Seq[Nucleobase]) {
       case (k, count) =>
         count == largestFreq
     }.map(_._1).toSeq.distinct.map { a =>
-      //NucleobaseSequence.decodeHash(a, length)
-      Seq()
+      NucleobaseSequence(NucleobaseSequence.numberToPattern(a, length))
     }
   }
 
@@ -145,8 +144,7 @@ class KMerAnalyzer(nucleobaseSequence: Seq[Nucleobase]) {
       .flatMap { window =>
         val miniAnalyze = new KMerAnalyzer(window)
         miniAnalyze.frequencies(k).filter(_._2 >= t).map { w =>
-          //NucleobaseSequence.decodeHash(w._1, k)
-          Seq()
+          NucleobaseSequence(NucleobaseSequence.numberToPattern(w._1, k))
         }
       }
       .toSeq

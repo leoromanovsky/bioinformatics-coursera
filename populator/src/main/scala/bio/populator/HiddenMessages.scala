@@ -31,14 +31,12 @@ object HiddenMessages {
         NucleobaseSequence("GCTGAGCATAGAAAA")))
 */
 
-    println(NucleobaseSequence.numberToPattern(6823, 10))
+    //println(NucleobaseSequence.numberToPattern(6823, 10))
 
-    /*
     val input = NucleobaseSequence(Source.fromFile("data/test.txt").getLines.mkString)
     val analyzer = new KMerAnalyzer(input)
-    println(analyzer.clump(12, 517, 17).mkString(" "))
+    println(analyzer.clump(9, 572, 18).mkString(" "))
 
-     */
     /*
     val input = Source.fromFile("data/vibrio_cholerae.txt").getLines.mkString
     val output = KMer.matchPattern(input, "CTTGATCAT").mkString(" ")

@@ -51,7 +51,7 @@ class KMerAnalyzerSpec extends BioUnitSpec {
         "CGGACTCGACAGATGTGAAGAACGACAATGTGAAGACTCGACACGACAGAGTGAAGAGAAGAGGAAACATTGTAA"))
       val out = subject.clump(5, 50, 4)
       assert(
-        out == Seq(NucleobaseSequence("CGACA"), NucleobaseSequence("GAAGA")))
+        out == Seq("CGACA", "GAAGA"))
     }
   }
 }
