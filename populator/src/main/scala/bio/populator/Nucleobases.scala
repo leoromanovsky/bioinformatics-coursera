@@ -92,7 +92,7 @@ class KMerAnalyzer(nucleobaseSequence: NucleobaseSequence) {
     nucleobaseSequence
       .sliding(pattern.length)
       .zipWithIndex
-      .filter(_._1 == pattern)
+      .filter(_._1 == pattern.underlying)
       .map(_._2)
       .toSeq
   }

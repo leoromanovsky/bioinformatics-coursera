@@ -37,9 +37,9 @@ class KMerAnalyzerSpec extends BioUnitSpec {
 
   describe("matchPattern") {
     it("is correct") {
-      val subject = new KMerAnalyzer(NucleobaseSequence("AAAACCCGGT"))
-      val out = subject.matchPattern(NucleobaseSequence("ATAT")).mkString(",")
-      assert(out == "1,3,9")
+      val subject = new KMerAnalyzer(NucleobaseSequence("GATATATGCATATACTT"))
+      val out = subject.matchPattern(NucleobaseSequence("ATAT"))
+      assert(out == Seq(1, 3, 9))
     }
   }
 
