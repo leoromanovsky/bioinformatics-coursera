@@ -152,4 +152,64 @@ class KMerAnalyzer(nucleobaseSequence: Seq[Nucleobase]) {
       .map(_.mkString)
       .sorted
   }
+
+  def betterClump(k: Int, l: Int, t: Int): Seq[String] = {
+    val firstSlice = nucleobaseSequence.slice(0, l)
+    val freqMap = new KMerAnalyzer(firstSlice).frequencies(k)
+    val runningFreqMap = collection.mutable.Map[Long, Int]().withDefaultValue(0) ++= freqMap
+    val clumps = scala.collection.mutable.Map[Long, Int]().withDefaultValue(0)
+
+    runningFreqMap.foreach { case(key, v) =>
+      if (v >= t) {
+        clumps(key) = clumps(key) + 1
+      }
+    }
+
+    for(i <- 1 until nucleobaseSequence.size - l) {
+      val firstPattern = nucleobaseSequence.slice(i - 1, i - 1 + k)
+      val firstIndex = NucleobaseSequence.patternToNumber(firstPattern)
+      runningFreqMap(firstIndex) = runningFreqMap(firstIndex) - 1
+
+      val lastPattern = nucleobaseSequence.slice(i + l - k, i + l)
+      val lastIndex = NucleobaseSequence.patternToNumber(lastPattern)
+      runningFreqMap(lastIndex) = runningFreqMap(lastIndex) + 1
+
+      if (runningFreqMap(lastIndex) >= t) {
+        clumps(lastIndex) = 1
+      }
+    }
+    
+    clumps.filter(_._2 == 1).map { case(key, _) =>
+      NucleobaseSequence.numberToPattern(key, k)
+    }.toSeq
+
+    /*
+    FrequentPatterns ← an empty set
+    for i ← 0 to 4k − 1
+        Clump(i) ← 0
+    Text ← Genome(0, L)
+    FrequencyArray ← ComputingFrequencies(Text, k)
+
+
+    for i ← 0 to 4k − 1
+        if FrequencyArray(i) ≥ t
+            Clump(i) ← 1
+
+    for i ← 1 to |Genome| − L
+        FirstPattern ← Genome(i − 1, k)
+        index ← PatternToNumber(FirstPattern)
+        FrequencyArray(index) ← FrequencyArray(index) − 1
+
+        LastPattern ← Genome(i + L − k, k)
+        index ← PatternToNumber(LastPattern)
+        FrequencyArray(index) ← FrequencyArray(index) + 1
+        if FrequencyArray(index) ≥ t
+            Clump(index) ← 1
+    for i ← 0 to 4k − 1
+        if Clump(i) = 1
+            Pattern ← NumberToPattern(i, k)
+            add Pattern to the set FrequentPatterns
+    return FrequentPatterns
+     */
+  }
 }

@@ -49,7 +49,7 @@ class KMerAnalyzerSpec extends BioUnitSpec {
     it("finds it") {
       val subject = new KMerAnalyzer(NucleobaseSequence(
         "CGGACTCGACAGATGTGAAGAACGACAATGTGAAGACTCGACACGACAGAGTGAAGAGAAGAGGAAACATTGTAA"))
-      val out = subject.clump(5, 50, 4)
+      val out = subject.betterClump(5, 50, 4)
       assert(
         out == Seq("CGACA", "GAAGA"))
     }
