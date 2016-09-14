@@ -51,6 +51,18 @@ object NucleobaseSequence {
     4 * patternToNumber(pattern.init) + encoding(pattern.last)
   }
 
+  def numberToPattern(index: Long, k: Int): String = {
+    if (k == 1) {
+      return decoding(index.toInt).toString
+    }
+
+    val prefixIndex: Int = (index / 4).toInt
+    val r: Int = (index % 4).toInt
+    val symbol = decoding(r).toString
+    val prefixPattern = numberToPattern(prefixIndex, k - 1)
+    s"${prefixPattern}${symbol}"
+  }
+
   private val encoding: Map[Nucleobase, Int] = Map(
     Nucleobases.Adenine -> 0,
     Nucleobases.Cytosine -> 1,

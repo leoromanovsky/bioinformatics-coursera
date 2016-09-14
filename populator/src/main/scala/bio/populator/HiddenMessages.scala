@@ -25,11 +25,13 @@ object HiddenMessages {
     KMer.mostFrequent(g, f).foreach(println)
      */
 
+    /*
     println(
       NucleobaseSequence.patternToNumber(
         NucleobaseSequence("GCTGAGCATAGAAAA")))
+*/
 
-    //println(NucleobaseSequence.decodeHash(45, 4))
+    println(NucleobaseSequence.numberToPattern(6823, 10))
 
     /*
     val input = NucleobaseSequence(Source.fromFile("data/test.txt").getLines.mkString)
