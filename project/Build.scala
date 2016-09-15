@@ -6,8 +6,6 @@ import sbtassembly.AssemblyKeys._
 
 object Build extends Build {
   override def settings = super.settings ++ Seq(
-    //javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
-    //scalacOptions += "-target:jvm-1.8"
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     scalaVersion := "2.11.7"
   )
@@ -37,7 +35,7 @@ object Build extends Build {
         runMain in Compile <<= Defaults.runMainTask(fullClasspath in Compile, runner in (Compile, run)),
         libraryDependencies ++= Seq(
           spark("core"),
-          "spark.jobserver" %% "job-server-api" % "0.6.2",
+          spark("mllib"),
           "com.databricks" %% "spark-csv" % "1.4.0",
           "com.github.tototoshi" %% "scala-csv" % "1.3.3"
         ),
@@ -58,7 +56,7 @@ object Build extends Build {
       )
       .dependsOn(core % "test->test;compile->compile")
 
-  val sparkVersion = "1.6.1"
+  val sparkVersion = "2.0.0"
   def spark(pkg: String): ModuleID = {
     "org.apache.spark" %% s"spark-$pkg" % sparkVersion % "provided"
   }

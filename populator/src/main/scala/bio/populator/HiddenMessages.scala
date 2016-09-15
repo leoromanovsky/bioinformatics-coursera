@@ -34,7 +34,7 @@ object HiddenMessages {
     //println(NucleobaseSequence.numberToPattern(6823, 10))
 
     //val input = NucleobaseSequence(Source.fromFile("data/e_coli.txt").getLines.mkString)
-    val analyzer = new KMerAnalyzer(NucleobaseSequence("CGGAGGACTCTAGGTAACGCTTATCAGGTCCATAGGACATTCA"))
+    val analyzer = KmerAnalyzer(NucleobaseSequence("CGGAGGACTCTAGGTAACGCTTATCAGGTCCATAGGACATTCA"))
     println(analyzer.mostFrequent(5))
 
     /*
