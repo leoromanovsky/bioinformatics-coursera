@@ -8,6 +8,8 @@ import org.apache.spark.mllib._
 import org.apache.spark.mllib.rdd.RDDFunctions._
 import org.apache.spark.rdd.RDD
 
+import scala.io.Source
+
 object KmerAnalyzer {
   def apply(nucleobaseSequence: Seq[Nucleobase]): KmerAnalyzer =
     new KmerAnalyzer(nucleobaseSequence)
@@ -110,22 +112,37 @@ class KmerAnalyzer(nucleobaseSequence: Seq[Nucleobase]) {
   }
 }
 
-class KmerAnalyzerSpark(seq: Seq[Nucleobase])(implicit sc: SparkContext) {
+class KmerAnalyzerSpark(data: RDD[String])(implicit sc: SparkContext) {
   def frequenciesSpark(length: Int): RDD[(Long, Int)] = {
-    sc.parallelize(seq)
+    data
       .sliding(length)
-      .map(s =>
-        (NucleobaseSequence.patternToNumber(s), 1))
+      .map { seq =>
+        val converted = seq.map(s => Nucleobases.parseString(s))
+        (NucleobaseSequence.patternToNumber(converted), 1)
+      }
       .reduceByKey(_ + _)
   }
 }
 
 object KmerAnalyzerSpark {
   def main(args: Array[String]) {
-    val conf = new SparkConf().setAppName("Simple Application")
+    val conf =
+      new SparkConf().setAppName("Simple Application").setMaster("local[8]")
     implicit val sc = new SparkContext(conf)
 
-    val analyzer = new KmerAnalyzerSpark(Seq())
-    analyzer.frequenciesSpark(3)
+    val startTime = System.currentTimeMillis()
+    val rddInput = sc.textFile("data/e_coli.txt")
+    val analyzer = new KmerAnalyzerSpark(rddInput)
+    analyzer.frequenciesSpark(20).collect()
+    val endTime = System.currentTimeMillis()
+    println("Spark: ", endTime - startTime)
+
+    val startTime2 = System.currentTimeMillis()
+    val input = NucleobaseSequence(
+      Source.fromFile("data/e_coli.txt").getLines.mkString)
+    val a2 = KmerAnalyzer(input)
+    a2.frequencies(20)
+    val endTime2 = System.currentTimeMillis()
+    println("Normal: ", endTime2 - startTime2)
   }
 }

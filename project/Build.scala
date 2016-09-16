@@ -41,7 +41,7 @@ object Build extends Build {
         ),
         test in assembly := {},
         dependencyOverrides ++= Set(
-          "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.4"
+          "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.5"
         ),
         assemblyMergeStrategy in assembly := {
           case PathList("javax", "servlet", xs @ _*) => MergeStrategy.last

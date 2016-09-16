@@ -9,7 +9,7 @@ object NucleobaseSequence {
   }
 
   def apply(s: String): Seq[Nucleobase] = {
-    s.map(Nucleobases.parseString(_))
+    s.map(p => Nucleobases.parseString(p.toString))
   }
 
   def patternToNumber(pattern: Seq[Nucleobase]): Long = {

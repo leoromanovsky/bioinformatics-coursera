@@ -1,15 +1,16 @@
 package bio.populator
 
-object Nucleobases {
-  sealed abstract class Nucleobase(symbol: String) {
+import java.io.Serializable
 
+object Nucleobases {
+  sealed abstract class Nucleobase(symbol: String) extends Serializable {
     def reverse: Nucleobase
 
     override def toString: String = symbol
   }
 
   case object Adenine extends Nucleobase("A") {
-    override def reverse = Thymine
+    override def reverse: Nucleobase = Thymine
   }
 
   case object Thymine extends Nucleobase("T") {
@@ -24,10 +25,10 @@ object Nucleobases {
     override def reverse: Nucleobase = Cytosine
   }
 
-  val parseString: Map[Char, Nucleobase] = Map(
-    'A' -> Adenine,
-    'T' -> Thymine,
-    'C' -> Cytosine,
-    'G' -> Guanine
+  val parseString: Map[String, Nucleobase] = Map(
+    "A" -> Adenine,
+    "T" -> Thymine,
+    "C" -> Cytosine,
+    "G" -> Guanine
   )
 }
