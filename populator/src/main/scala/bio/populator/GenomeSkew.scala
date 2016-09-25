@@ -2,6 +2,8 @@ package bio.populator
 
 import bio.populator.Nucleobases.Nucleobase
 
+import scala.io.Source
+
 class GenomeSkew(seq: Seq[Nucleobase]) {
 
   /**
@@ -17,14 +19,23 @@ class GenomeSkew(seq: Seq[Nucleobase]) {
       case Nucleobases.Cytosine => -1
       case _ => 0
     }
-    skews.drop(1).scanLeft(skews.head) {
+    Seq(0) ++ skews.drop(1).scanLeft(skews.head) {
       case (r, c) => r + c
     }
+  }
+
+  def indexOfMinSkew: Seq[Int] = {
+    val skews = skew
+    skews.zipWithIndex.filter(_._1 == skews.min).map(_._2)
   }
 }
 
 object GenomeSkew {
   def apply(seq: Seq[Nucleobase]): GenomeSkew = new GenomeSkew(seq)
 
-  def main(args: Array[String]): Unit = {}
+  def main(args: Array[String]): Unit = {
+    val input = NucleobaseSequence(Source.fromFile("data/test.txt").getLines.mkString)
+    val clz = GenomeSkew(input)
+    println(clz.indexOfMinSkew.mkString(" "))
+  }
 }
