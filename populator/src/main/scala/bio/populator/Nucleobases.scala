@@ -31,4 +31,13 @@ object Nucleobases {
     "C" -> Cytosine,
     "G" -> Guanine
   )
+
+  def otherBases(s: Char): Seq[Char] = {
+    s match {
+      case 'A' => Seq('T', 'C', 'G')
+      case 'T' => Seq('A', 'C', 'G')
+      case 'C' => Seq('A', 'T', 'G')
+      case 'G' => Seq('A', 'T', 'C')
+    }
+  }
 }
