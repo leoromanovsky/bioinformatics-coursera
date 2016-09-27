@@ -56,6 +56,40 @@ class GenomeSkew(seq: Seq[Nucleobase]) {
       }
     }.toSet.+(pattern)
   }
+
+  def neighbors(pattern: String, d: Int): Set[String] = {
+    if (d <= 0) {
+      return Set(pattern)
+    }
+
+    if (pattern.isEmpty) {
+      return Set("ATCG")
+    }
+
+    val neighborhood: Set[String] = Set()
+
+    val suffix = pattern.substring(1, pattern.length)
+    println("suffix", suffix)
+
+    val suffixNeighbors = neighbors(suffix, d)
+    println("suffixNeighbors", suffixNeighbors)
+
+    suffixNeighbors.foreach { neighbor =>
+      println("neighbor", neighbor)
+
+      if (hammingDistance(suffix, neighbor) < d) {
+        Seq('A', 'C', 'T', 'G').foreach { char =>
+          neighborhood.+(s"$char$neighbor")
+        }
+      } else {
+        neighborhood.+(s"${pattern.head}${neighbor}")
+      }
+    }
+
+    println("neigh", neighborhood)
+
+    neighborhood
+  }
 }
 
 object GenomeSkew {
@@ -63,6 +97,8 @@ object GenomeSkew {
 
   def main(args: Array[String]): Unit = {
     println(GenomeSkew(Seq()).immediateNeighbors("AA"))
+
+    println(GenomeSkew(Seq()).neighbors("AA", 1))
 
     /*
     val input = NucleobaseSequence(Source.fromFile("data/test.txt").getLines.mkString)
